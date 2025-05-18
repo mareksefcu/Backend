@@ -1,4 +1,3 @@
-
 const uri = "mongodb+srv://marsefcu:020702@cluster0.t4fqsaw.mongodb.net/?appName=Cluster0";
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb'); // Add ObjectId
 const client = new MongoClient(uri, {
@@ -47,6 +46,20 @@ async function remove(categoryId) {
   }
 }
 
+async function take(categoryId) {
+  try {
+    const objectId = new ObjectId(categoryId);
+    const category = await client
+      .db("CategoryList")
+      .collection("CatList")
+      .findOne({ _id: objectId });
+    return category;
+  } catch (error) {
+    console.error("Error getting category:", error);
+    throw { code: "failedToGetCategory", category: categoryId, details: error };
+  }
+}
+
 async function getCategoryMap() {
   const categoryMap = {};
   const categoryList = await list(); // now it's async
@@ -75,6 +88,6 @@ async function list() {
 module.exports = {
   create,
   remove,
-  list
+  list,
+  take
 }
-
